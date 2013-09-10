@@ -2,6 +2,7 @@
 
 uniform vec3		iResolution;           // viewport resolution (in pixels)
 uniform float		iGlobalTime;           // shader playback time (in seconds)
+uniform int			iEmboss;           
 uniform vec3		iMouse;                // mouse pixel coords. xy: current (if MLB down), zw: click
 uniform sampler2D	iChannel0;
 uniform vec3		iChannelResolution;
@@ -106,50 +107,71 @@ C_Sample SampleMaterial(const in vec2 vUV, sampler2D sampler,  const in vec2 vTe
 
 void main(void)
 {	
-	vec2 vUV = gl_FragCoord.xy / iResolution.xy;
-	
-	C_Sample materialSample;
-		
-	float fNormalScale = 10.0;
-	materialSample = SampleMaterial( vUV, iChannel0, iChannelResolution.xy, fNormalScale );
-	
-	// Random Lighting...
-	
-	float fLightHeight = 0.2;
-	float fViewHeight = 2.0;
-	
-	vec3 vSurfacePos = vec3(vUV, 0.0);
-	
-	vec3 vViewPos = vec3(0.5, 0.5, fViewHeight);
-			
-	vec3 vLightPos = vec3( vec2(sin(iGlobalTime),cos(iGlobalTime)) * 0.25 + 0.5 , fLightHeight);
-		
-	if( iMouse.z > 0.0 )
+	if ( iEmboss==0)
 	{
-		vLightPos = vec3(iMouse.xy / iResolution.xy, fLightHeight);
+		vec3 c[9];
+		for (int i=0; i < 3; ++i)
+		{
+			for (int j=0; j < 3; ++j)
+			{
+				c[3*i+j] = texture2D(iChannel0, (gl_FragCoord.xy+vec2(i-1,j-1)) / iResolution.xy).rgb;
+			}
+		}
+	
+		vec3 Lx = 2.0*(c[7]-c[1]) + c[6] + c[8] - c[2] - c[0];
+		vec3 Ly = 2.0*(c[3]-c[5]) + c[6] + c[0] - c[2] - c[8];
+		vec3 G = sqrt(Lx*Lx+Ly*Ly);
+	
+		gl_FragColor = vec4(G, 1.0);
 	}
+	else
+	{
+
+		vec2 vUV = gl_FragCoord.xy / iResolution.xy;
 	
-	vec3 vDirToView = normalize( vViewPos - vSurfacePos );
-	vec3 vDirToLight = normalize( vLightPos - vSurfacePos );
+		C_Sample materialSample;
 		
-	float fNDotL = clamp( dot(materialSample.vNormal, vDirToLight), 0.0, 1.0);
-	float fDiffuse = fNDotL;
+		float fNormalScale = 10.0;
+		materialSample = SampleMaterial( vUV, iChannel0, iChannelResolution.xy, fNormalScale );
 	
-	vec3 vHalf = normalize( vDirToView + vDirToLight );
-	float fNDotH = clamp( dot(materialSample.vNormal, vHalf), 0.0, 1.0);
-	float fSpec = pow(fNDotH, 10.0) * fNDotL * 0.5;
+		// Random Lighting...
 	
-	vec3 vResult = materialSample.vAlbedo * fDiffuse + fSpec;
+		float fLightHeight = 0.2;
+		float fViewHeight = 2.0;
 	
-	vResult = sqrt(vResult);
+		vec3 vSurfacePos = vec3(vUV, 0.0);
 	
-	#ifdef SHOW_NORMAL_MAP
-	vResult = materialSample.vNormal * 0.5 + 0.5;
-	#endif
+		vec3 vViewPos = vec3(0.5, 0.5, fViewHeight);
+			
+		vec3 vLightPos = vec3( vec2(sin(iGlobalTime),cos(iGlobalTime)) * 0.25 + 0.5 , fLightHeight);
+		
+		if( iMouse.z > 0.0 )
+		{
+			vLightPos = vec3(iMouse.xy / iResolution.xy, fLightHeight);
+		}
 	
-	#ifdef SHOW_ALBEDO
-	vResult = sqrt(materialSample.vAlbedo);
-	#endif
+		vec3 vDirToView = normalize( vViewPos - vSurfacePos );
+		vec3 vDirToLight = normalize( vLightPos - vSurfacePos );
+		
+		float fNDotL = clamp( dot(materialSample.vNormal, vDirToLight), 0.0, 1.0);
+		float fDiffuse = fNDotL;
 	
-	gl_FragColor = vec4(vResult,1.0);
+		vec3 vHalf = normalize( vDirToView + vDirToLight );
+		float fNDotH = clamp( dot(materialSample.vNormal, vHalf), 0.0, 1.0);
+		float fSpec = pow(fNDotH, 10.0) * fNDotL * 0.5;
+	
+		vec3 vResult = materialSample.vAlbedo * fDiffuse + fSpec;
+	
+		vResult = sqrt(vResult);
+	
+		#ifdef SHOW_NORMAL_MAP
+		vResult = materialSample.vNormal * 0.5 + 0.5;
+		#endif
+	
+		#ifdef SHOW_ALBEDO
+		vResult = sqrt(materialSample.vAlbedo);
+		#endif
+	
+		gl_FragColor = vec4(vResult,1.0);
+	}
 }

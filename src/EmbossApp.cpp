@@ -23,12 +23,14 @@ class EmbossApp : public AppNative {
 	float			iGlobalTime;           // shader playback time (in seconds)
 	Vec3i			iMouse;                // mouse pixel coords. xy: current (if MLB down), zw: click
 	gl::GlslProg	mShader;
+	int				iEmboss;
 };
 
 void EmbossApp::setup()
 {
 	try {
 		iResolution = Vec3i( 1024, 768, 1 );
+		iEmboss = 1;
 		iGlobalTime = 1;
 		iMouse = Vec3i( 512, 300, 1 );
 		// load the two textures
@@ -68,6 +70,7 @@ void EmbossApp::draw()
 	mShader.uniform("iGlobalTime",iGlobalTime++);
 	mShader.uniform("iResolution",iResolution);
 	mShader.uniform("iMouse", iMouse);
+	mShader.uniform("iEmboss", iEmboss);
 	mShader.uniform("iChannel0", 0);
 	mShader.uniform("iChannelResolution", iChannelResolution);
 	// enable the use of textures
