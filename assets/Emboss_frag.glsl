@@ -5,6 +5,7 @@ uniform float		iGlobalTime;           // shader playback time (in seconds)
 uniform int			iEmboss;           
 uniform vec3		iMouse;                // mouse pixel coords. xy: current (if MLB down), zw: click
 uniform sampler2D	iChannel0;
+uniform sampler2D	iChannel1;
 uniform vec3		iChannelResolution;
 
 // Using a sobel filter to create a normal map and then applying simple lighting.
@@ -107,14 +108,14 @@ C_Sample SampleMaterial(const in vec2 vUV, sampler2D sampler,  const in vec2 vTe
 
 void main(void)
 {	
-	if ( iEmboss==0)
+	if ( iEmboss==0 )
 	{
 		vec3 c[9];
 		for (int i=0; i < 3; ++i)
 		{
 			for (int j=0; j < 3; ++j)
 			{
-				c[3*i+j] = texture2D(iChannel0, (gl_FragCoord.xy+vec2(i-1,j-1)) / iResolution.xy).rgb;
+				c[3*i+j] = texture2D(iChannel1, (gl_FragCoord.xy+vec2(i-1,j-1)) / iResolution.xy).rgb;
 			}
 		}
 	
@@ -126,52 +127,90 @@ void main(void)
 	}
 	else
 	{
-
-		vec2 vUV = gl_FragCoord.xy / iResolution.xy;
-	
-		C_Sample materialSample;
-		
-		float fNormalScale = 10.0;
-		materialSample = SampleMaterial( vUV, iChannel0, iChannelResolution.xy, fNormalScale );
-	
-		// Random Lighting...
-	
-		float fLightHeight = 0.2;
-		float fViewHeight = 2.0;
-	
-		vec3 vSurfacePos = vec3(vUV, 0.0);
-	
-		vec3 vViewPos = vec3(0.5, 0.5, fViewHeight);
-			
-		vec3 vLightPos = vec3( vec2(sin(iGlobalTime),cos(iGlobalTime)) * 0.25 + 0.5 , fLightHeight);
-		
-		if( iMouse.z > 0.0 )
+		if ( iEmboss==1 )
 		{
-			vLightPos = vec3(iMouse.xy / iResolution.xy, fLightHeight);
-		}
+			vec2 vUV = gl_FragCoord.xy / iResolution.xy;
 	
-		vec3 vDirToView = normalize( vViewPos - vSurfacePos );
-		vec3 vDirToLight = normalize( vLightPos - vSurfacePos );
+			C_Sample materialSample;
 		
-		float fNDotL = clamp( dot(materialSample.vNormal, vDirToLight), 0.0, 1.0);
-		float fDiffuse = fNDotL;
+			float fNormalScale = 10.0;
+			materialSample = SampleMaterial( vUV, iChannel0, iChannelResolution.xy, fNormalScale );
 	
-		vec3 vHalf = normalize( vDirToView + vDirToLight );
-		float fNDotH = clamp( dot(materialSample.vNormal, vHalf), 0.0, 1.0);
-		float fSpec = pow(fNDotH, 10.0) * fNDotL * 0.5;
+			// Random Lighting...
 	
-		vec3 vResult = materialSample.vAlbedo * fDiffuse + fSpec;
+			float fLightHeight = 0.2;
+			float fViewHeight = 2.0;
 	
-		vResult = sqrt(vResult);
+			vec3 vSurfacePos = vec3(vUV, 0.0);
 	
-		#ifdef SHOW_NORMAL_MAP
-		vResult = materialSample.vNormal * 0.5 + 0.5;
-		#endif
+			vec3 vViewPos = vec3(0.5, 0.5, fViewHeight);
+			
+			vec3 vLightPos = vec3( vec2(sin(iGlobalTime),cos(iGlobalTime)) * 0.25 + 0.5 , fLightHeight);
+		
+			if( iMouse.z > 0.0 )
+			{
+				vLightPos = vec3(iMouse.xy / iResolution.xy, fLightHeight);
+			}
 	
-		#ifdef SHOW_ALBEDO
-		vResult = sqrt(materialSample.vAlbedo);
-		#endif
+			vec3 vDirToView = normalize( vViewPos - vSurfacePos );
+			vec3 vDirToLight = normalize( vLightPos - vSurfacePos );
+		
+			float fNDotL = clamp( dot(materialSample.vNormal, vDirToLight), 0.0, 1.0);
+			float fDiffuse = fNDotL;
 	
-		gl_FragColor = vec4(vResult,1.0);
+			vec3 vHalf = normalize( vDirToView + vDirToLight );
+			float fNDotH = clamp( dot(materialSample.vNormal, vHalf), 0.0, 1.0);
+			float fSpec = pow(fNDotH, 10.0) * fNDotL * 0.5;
+	
+			vec3 vResult = materialSample.vAlbedo * fDiffuse + fSpec;
+	
+			vResult = sqrt(vResult);
+	
+			#ifdef SHOW_NORMAL_MAP
+			vResult = materialSample.vNormal * 0.5 + 0.5;
+			#endif
+	
+			#ifdef SHOW_ALBEDO
+			vResult = sqrt(materialSample.vAlbedo);
+			#endif
+	
+			gl_FragColor = vec4(vResult,1.0);
+		}
+		else
+		{
+			vec2 p = (gl_FragCoord.xy / iResolution.xy)  ;
+	
+			vec3 color =vec3(1.0+p.y*1.2,0.8+p.y*9.,2.8+p.y*8.);
+			vec3 a ;
+		//	float Mx = 22.;
+			for ( float i	=22. ; i > 8.0; i-- ){
+				color	*=	0.8;
+		//		color	=	pow(color,1.1);
+		
+				vec2 nNoise = vec2(iGlobalTime*(0.5+i*0.1),p.x*(sin(-p.x*20.-iGlobalTime*5.)*2.+0.5+i*0.3));
+				const vec2 d = vec2(0.0, 1.0);
+				vec2 b = floor(nNoise), f = smoothstep(vec2(0.0), vec2(1.0), fract(nNoise));
+		
+				float rand1 = fract(sin(dot(b, vec2(12.9898, 4.1414))) * 43758.5453);
+				float rand2 = fract(sin(dot((b + d.yx), vec2(12.9898, 4.1414))) * 43758.5453);
+				float rand3 = fract(sin(dot((b + d.xy), vec2(12.9898, 4.1414))) * 43758.5453);
+				float rand4 = fract(sin(dot((b + d.yy), vec2(12.9898, 4.1414))) * 43758.5453);
+		
+				float noise = mix(mix(rand1, rand2, f.x), mix(rand3, rand4, f.x), f.y);
+				p.xy	=p *(1.0+sin(p.yx*20.-noise*5.)*0.02);
+				vec3 Br = vec3(1.0,1.0+sin(p.x)*0.2,1.0+sin(p.x)*0.4);
+				a = vec3(p.y) + sin(p.x*(i*0.5)+iGlobalTime*2.+sin(iGlobalTime*(0.001 + i*0.0001*Br))*5.0+noise*Br)*0.005*i-0.05*sin(iGlobalTime+i*0.2);
+		
+				color += sin(max(vec3(0.0),pow(1.0-abs(a),vec3(300.)*Br)*0.2+pow(1.0-abs(a),vec3(30.)*Br)*0.25));
+		
+		
+				if(a.x < 0.0){
+					color += vec3(0.6-i*0.1,-1.5+i*0.2,0.5+i*0.05)*(0.4-pow(a.x,5.)*5.)*0.12*Br;
+		
+				}
+			}
+
+			gl_FragColor = vec4( color, 1.0 );
+		}
 	}
 }
