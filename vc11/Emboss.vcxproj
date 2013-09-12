@@ -50,7 +50,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\include;..\..\..\cinder_master\include;..\..\..\cinder_master\boost;..\..\..\cinder_master\blocks\OSC\src;$(CINDER_085)\blocks\QuickTime\include\msw;$(CINDER_085)\blocks\QuickTime\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;$(CINDER_085)\include;$(CINDER_085)\boost;$(CINDER_085)\blocks\OSC\src;$(CINDER_085)\blocks\QuickTime\include\msw;$(CINDER_085)\blocks\QuickTime\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;NOMINMAX;_WIN32_WINNT=0x0502;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -61,11 +61,11 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <ResourceCompile>
-      <AdditionalIncludeDirectories>"..\..\..\cinder_master\include";..\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>"$(CINDER_085)\include";..\include</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>cinder_d.lib;$(CINDER_085)\blocks\QuickTime\lib\msw\CVClient.lib;$(CINDER_085)\blocks\QuickTime\lib\msw\QTMLClient.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>"..\..\..\cinder_master\lib";"..\..\..\cinder_master\lib\msw"</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>"$(CINDER_085)\lib";"$(CINDER_085)\lib\msw"</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
@@ -76,7 +76,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\include;..\..\..\cinder_master\include;..\..\..\cinder_master\boost;..\..\..\cinder_master\blocks\OSC\src;$(CINDER_085)\blocks\QuickTime\include\msw;$(CINDER_085)\blocks\QuickTime\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;$(CINDER_085)\include;$(CINDER_085)\boost;$(CINDER_085)\blocks\OSC\src;$(CINDER_085)\blocks\QuickTime\include\msw;$(CINDER_085)\blocks\QuickTime\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;NOMINMAX;_WIN32_WINNT=0x0502;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader />
@@ -88,11 +88,11 @@
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
     </ProjectReference>
     <ResourceCompile>
-      <AdditionalIncludeDirectories>"..\..\..\cinder_master\include";..\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>"$(CINDER_085)\include";..\include</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>cinder.lib;$(CINDER_085)\blocks\QuickTime\lib\msw\CVClient.lib;$(CINDER_085)\blocks\QuickTime\lib\msw\QTMLClient.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>"..\..\..\cinder_master\lib";"..\..\..\cinder_master\lib\msw"</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>"$(CINDER_085)\lib";"$(CINDER_085)\lib\msw"</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <GenerateMapFile>true</GenerateMapFile>
       <SubSystem>Windows</SubSystem>
@@ -108,38 +108,38 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\EmbossApp.cpp" />
-    <ClCompile Include="..\..\..\cinder_master\blocks\OSC\src\OscBundle.cpp" />
-    <ClCompile Include="..\..\..\cinder_master\blocks\OSC\src\OscListener.cpp" />
-    <ClCompile Include="..\..\..\cinder_master\blocks\OSC\src\OscMessage.cpp" />
-    <ClCompile Include="..\..\..\cinder_master\blocks\OSC\src\OscSender.cpp" />
-    <ClCompile Include="..\..\..\cinder_master\blocks\OSC\src\ip\IpEndpointName.cpp" />
-    <ClCompile Include="..\..\..\cinder_master\blocks\OSC\src\osc\OscOutboundPacketStream.cpp" />
-    <ClCompile Include="..\..\..\cinder_master\blocks\OSC\src\osc\OscPrintReceivedElements.cpp" />
-    <ClCompile Include="..\..\..\cinder_master\blocks\OSC\src\osc\OscReceivedElements.cpp" />
-    <ClCompile Include="..\..\..\cinder_master\blocks\OSC\src\osc\OscTypes.cpp" />
-    <ClCompile Include="..\..\..\cinder_master\blocks\OSC\src\ip\win32\NetworkingUtils.cpp" />
-    <ClCompile Include="..\..\..\cinder_master\blocks\OSC\src\ip\win32\UdpSocket.cpp" />
+    <ClCompile Include="$(CINDER_085)\blocks\OSC\src\OscBundle.cpp" />
+    <ClCompile Include="$(CINDER_085)\blocks\OSC\src\OscListener.cpp" />
+    <ClCompile Include="$(CINDER_085)\blocks\OSC\src\OscMessage.cpp" />
+    <ClCompile Include="$(CINDER_085)\blocks\OSC\src\OscSender.cpp" />
+    <ClCompile Include="$(CINDER_085)\blocks\OSC\src\ip\IpEndpointName.cpp" />
+    <ClCompile Include="$(CINDER_085)\blocks\OSC\src\osc\OscOutboundPacketStream.cpp" />
+    <ClCompile Include="$(CINDER_085)\blocks\OSC\src\osc\OscPrintReceivedElements.cpp" />
+    <ClCompile Include="$(CINDER_085)\blocks\OSC\src\osc\OscReceivedElements.cpp" />
+    <ClCompile Include="$(CINDER_085)\blocks\OSC\src\osc\OscTypes.cpp" />
+    <ClCompile Include="$(CINDER_085)\blocks\OSC\src\ip\win32\NetworkingUtils.cpp" />
+    <ClCompile Include="$(CINDER_085)\blocks\OSC\src\ip\win32\UdpSocket.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Resources.h" />
-    <ClInclude Include="..\..\..\cinder_master\blocks\OSC\src\OscArg.h" />
-    <ClInclude Include="..\..\..\cinder_master\blocks\OSC\src\OscBundle.h" />
-    <ClInclude Include="..\..\..\cinder_master\blocks\OSC\src\OscListener.h" />
-    <ClInclude Include="..\..\..\cinder_master\blocks\OSC\src\OscMessage.h" />
-    <ClInclude Include="..\..\..\cinder_master\blocks\OSC\src\OscSender.h" />
-    <ClInclude Include="..\..\..\cinder_master\blocks\OSC\src\ip\IpEndpointName.h" />
-    <ClInclude Include="..\..\..\cinder_master\blocks\OSC\src\ip\NetworkingUtils.h" />
-    <ClInclude Include="..\..\..\cinder_master\blocks\OSC\src\ip\PacketListener.h" />
-    <ClInclude Include="..\..\..\cinder_master\blocks\OSC\src\ip\TimerListener.h" />
-    <ClInclude Include="..\..\..\cinder_master\blocks\OSC\src\ip\UdpSocket.h" />
-    <ClInclude Include="..\..\..\cinder_master\blocks\OSC\src\osc\MessageMappingOscPacketListener.h" />
-    <ClInclude Include="..\..\..\cinder_master\blocks\OSC\src\osc\OscException.h" />
-    <ClInclude Include="..\..\..\cinder_master\blocks\OSC\src\osc\OscHostEndianness.h" />
-    <ClInclude Include="..\..\..\cinder_master\blocks\OSC\src\osc\OscOutboundPacketStream.h" />
-    <ClInclude Include="..\..\..\cinder_master\blocks\OSC\src\osc\OscPacketListener.h" />
-    <ClInclude Include="..\..\..\cinder_master\blocks\OSC\src\osc\OscPrintReceivedElements.h" />
-    <ClInclude Include="..\..\..\cinder_master\blocks\OSC\src\osc\OscReceivedElements.h" />
-    <ClInclude Include="..\..\..\cinder_master\blocks\OSC\src\osc\OscTypes.h" />
+    <ClInclude Include="$(CINDER_085)\blocks\OSC\src\OscArg.h" />
+    <ClInclude Include="$(CINDER_085)\blocks\OSC\src\OscBundle.h" />
+    <ClInclude Include="$(CINDER_085)\blocks\OSC\src\OscListener.h" />
+    <ClInclude Include="$(CINDER_085)\blocks\OSC\src\OscMessage.h" />
+    <ClInclude Include="$(CINDER_085)\blocks\OSC\src\OscSender.h" />
+    <ClInclude Include="$(CINDER_085)\blocks\OSC\src\ip\IpEndpointName.h" />
+    <ClInclude Include="$(CINDER_085)\blocks\OSC\src\ip\NetworkingUtils.h" />
+    <ClInclude Include="$(CINDER_085)\blocks\OSC\src\ip\PacketListener.h" />
+    <ClInclude Include="$(CINDER_085)\blocks\OSC\src\ip\TimerListener.h" />
+    <ClInclude Include="$(CINDER_085)\blocks\OSC\src\ip\UdpSocket.h" />
+    <ClInclude Include="$(CINDER_085)\blocks\OSC\src\osc\MessageMappingOscPacketListener.h" />
+    <ClInclude Include="$(CINDER_085)\blocks\OSC\src\osc\OscException.h" />
+    <ClInclude Include="$(CINDER_085)\blocks\OSC\src\osc\OscHostEndianness.h" />
+    <ClInclude Include="$(CINDER_085)\blocks\OSC\src\osc\OscOutboundPacketStream.h" />
+    <ClInclude Include="$(CINDER_085)\blocks\OSC\src\osc\OscPacketListener.h" />
+    <ClInclude Include="$(CINDER_085)\blocks\OSC\src\osc\OscPrintReceivedElements.h" />
+    <ClInclude Include="$(CINDER_085)\blocks\OSC\src\osc\OscReceivedElements.h" />
+    <ClInclude Include="$(CINDER_085)\blocks\OSC\src\osc\OscTypes.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\assets\Emboss_frag.glsl" />
