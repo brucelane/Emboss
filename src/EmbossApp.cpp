@@ -92,11 +92,16 @@ void EmbossApp::setup()
 	try 
 	{
 		iResolution = Vec3i( 1024, 768, 1 );
-		iEmboss = 1;
+		iEmboss = 0;
 		iGlobalTime = 1;
 		iMouse = Vec3i( 512, 300, 1 );
+
+		gl::Texture::Format format;
+		format.setTargetRect();
+		mTexture0 = gl::Texture(loadImage( loadAsset("emboss.jpg") ), format);
+
 		// load the two textures
-		mTexture0 = gl::Texture( loadImage( loadAsset("emboss.jpg") ) );
+		//mTexture0 = gl::Texture( loadImage( loadAsset("emboss.jpg") ) );
 		iChannelResolution = Vec3i( mTexture0.getWidth(),  mTexture0.getHeight(), 1);
 		// load and compile the shader
 		mShader = gl::GlslProg( loadAsset("Emboss_vert.glsl"), loadAsset("Emboss_frag.glsl") );
@@ -150,6 +155,7 @@ void EmbossApp::draw()
 	}	
 	else
 	{*/
+	
 		mShader.bind();
 		mShader.uniform("iGlobalTime",iGlobalTime++);
 		mShader.uniform("iResolution",iResolution);
@@ -161,7 +167,7 @@ void EmbossApp::draw()
 		// enable the use of textures
 		gl::enable( GL_TEXTURE_2D );
 
-		if ( mFrameTexture )
+		if ( mMovie && mFrameTexture )
 		{
 			mFrameTexture.bind(0);
 		}
@@ -174,7 +180,7 @@ void EmbossApp::draw()
 		// unbind textures and shader
 		mTexture0.unbind();
 		mShader.unbind();
-	//}
+	
 }
 
 CINDER_APP_NATIVE( EmbossApp, RendererGl )

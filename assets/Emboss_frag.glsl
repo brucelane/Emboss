@@ -1,11 +1,11 @@
 #version 110
-
+#extension GL_ARB_texture_rectangle : enable
 uniform vec3		iResolution;           // viewport resolution (in pixels)
 uniform float		iGlobalTime;           // shader playback time (in seconds)
 uniform int			iEmboss;           
 uniform vec3		iMouse;                // mouse pixel coords. xy: current (if MLB down), zw: click
-uniform sampler2D	iChannel0;
-uniform sampler2D	iChannel1;
+uniform sampler2DRect	iChannel0;
+uniform sampler2DRect	iChannel1;
 uniform vec3		iChannelResolution;
 
 // Using a sobel filter to create a normal map and then applying simple lighting.
@@ -115,7 +115,7 @@ void main(void)
 		{
 			for (int j=0; j < 3; ++j)
 			{
-				c[3*i+j] = texture2D(iChannel1, (gl_FragCoord.xy+vec2(i-1,j-1)) / iResolution.xy).rgb;
+				c[3*i+j] = texture2DRect(iChannel0, (gl_FragCoord.xy+vec2(i-1,j-1)) / iResolution.xy).rgb;
 			}
 		}
 	
