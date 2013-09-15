@@ -98,13 +98,13 @@ void EmbossApp::setup()
 
 		gl::Texture::Format format;
 		format.setTargetRect();
-		mTexture0 = gl::Texture(loadImage( loadAsset("emboss.jpg") ), format);
-
-		// load the two textures
-		//mTexture0 = gl::Texture( loadImage( loadAsset("emboss.jpg") ) );
+		mTexture0 = gl::Texture(loadImage( loadAsset("emboss1.jpg") ), format);
+		iResolution = Vec3i( mTexture0.getWidth(), mTexture0.getHeight(), 1 );
+		iGlobalTime = 1;
+		iMouse = Vec3i( 1024/2, 768/2, 1 );
 		iChannelResolution = Vec3i( mTexture0.getWidth(),  mTexture0.getHeight(), 1);
 		// load and compile the shader
-		mShader = gl::GlslProg( loadAsset("Emboss_vert.glsl"), loadAsset("Emboss_frag.glsl") );
+		mShader = gl::GlslProg( loadAsset("Emboss_vert.glsl"), loadAsset("Emboss_frag_test.glsl") );
 		//addFullScreenMovie();
 	}
 	catch( const std::exception &e ) 
@@ -128,6 +128,8 @@ void EmbossApp::mouseMove( MouseEvent event )
 }
 void EmbossApp::update()
 {
+	iGlobalTime += 0.01;
+
 	if ( mMovie )
 	{
 		mFrameTexture = mMovie.getTexture();
@@ -138,49 +140,36 @@ void EmbossApp::draw()
 {
 	// clear the window
 	gl::clear();
-	/*if ( mMovie )
+
+	gl::enableAlphaBlending();
+	glEnable( GL_TEXTURE_RECTANGLE_ARB );
+
+	mShader.bind();
+	mShader.uniform("iGlobalTime",iGlobalTime);
+	mShader.uniform("iResolution",iResolution);
+	mShader.uniform("iChannelResolution", iChannelResolution);
+	mShader.uniform("iMouse", iMouse);
+	mShader.uniform("iChannel0", 0);
+
+	if ( mMovie && mFrameTexture )
 	{
-		gl::enableAlphaBlending();
-		if( mFrameTexture ) 
-		{
-		Rectf centeredRect = Rectf( mFrameTexture.getBounds() ).getCenteredFit( getWindowBounds(), true );
-		gl::draw( mFrameTexture, centeredRect  );
-		}
-		if( mInfoTexture )
-		{
-			glDisable( GL_TEXTURE_RECTANGLE_ARB );
-			gl::draw( mInfoTexture, Vec2f( 20, getWindowHeight() - 20 - mInfoTexture.getHeight() ) );
-		}
-		gl::disableAlphaBlending();
-	}	
+		mFrameTexture.bind(0);
+		mShader.uniform("width",mFrameTexture.getWidth()); 
+		mShader.uniform("height",mFrameTexture.getHeight()); 
+	}
 	else
-	{*/
-	
-		mShader.bind();
-		mShader.uniform("iGlobalTime",iGlobalTime++);
-		mShader.uniform("iResolution",iResolution);
-		mShader.uniform("iMouse", iMouse);
-		mShader.uniform("iEmboss", iEmboss);
-		mShader.uniform("iChannel0", 0);
-		mShader.uniform("iChannel1", 1);
-		mShader.uniform("iChannelResolution", iChannelResolution);
-		// enable the use of textures
-		gl::enable( GL_TEXTURE_2D );
+	{
+		mTexture0.bind(0);
+		mShader.uniform("width",mTexture0.getWidth()); 
+		mShader.uniform("height",mTexture0.getHeight()); 
+	}
 
-		if ( mMovie && mFrameTexture )
-		{
-			mFrameTexture.bind(0);
-		}
-		else
-		{
-			mTexture0.bind(0);
-		}
-		gl::drawSolidRect( Rectf( getWindowBounds() ), false );
+	gl::drawSolidRect(getWindowBounds());
 
-		// unbind textures and shader
-		mTexture0.unbind();
-		mShader.unbind();
-	
+	// unbind textures and shader
+	if ( mFrameTexture ) mFrameTexture.unbind();
+	else mTexture0.unbind();
+	mShader.unbind();
 }
 
 CINDER_APP_NATIVE( EmbossApp, RendererGl )

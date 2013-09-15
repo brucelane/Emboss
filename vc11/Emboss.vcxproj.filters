@@ -150,5 +150,11 @@
     <None Include="..\assets\Emboss_vert.glsl">
       <Filter>Shader Files</Filter>
     </None>
+    <None Include="..\assets\Emboss_frag_test.glsl">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="..\assets\Emboss_vert_test.glsl">
+      <Filter>Shader Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

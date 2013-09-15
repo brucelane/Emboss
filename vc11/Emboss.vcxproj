@@ -143,7 +143,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\assets\Emboss_frag.glsl" />
+    <None Include="..\assets\Emboss_frag_test.glsl" />
     <None Include="..\assets\Emboss_vert.glsl" />
+    <None Include="..\assets\Emboss_vert_test.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
